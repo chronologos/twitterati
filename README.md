@@ -15,9 +15,9 @@ Viewing the repository history allows you to see how your followers have changed
    4. `git submodule add https://github.com/chronologos/twitterati`
    5. `git remote add origin https://github.com/${USERNAME}/${REMOTE_REPO}.git`
 3. copy the .github folder from this repository into your repository. This contains the configuration for GitHub Actions.
-   1. e.g. `cp twitterati/.github .`
+   1. e.g. `cp -r twitterati/.github .`
    2. uncomment the yaml file
-4. In your GitHub repository secrets, add CONSUMERKEY="your key" and CONSUMERSECRET="your secret" from your Twitter App's Consumer API keys. 
+4. In your GitHub repository secrets, add the following vars: USERNAME="your twitter username", CONSUMERKEY="your key" and CONSUMERSECRET="your secret" from your Twitter App's Consumer API keys. 
 5. Run by committing and pushing to origin.
 6. If you wish to run this locally, you will need to set up a profiles.clj file (more instructions to come).
 
