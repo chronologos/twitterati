@@ -1,4 +1,4 @@
-(defproject twitter-followers "0.1.0-SNAPSHOT"
+(defproject twitter-followers "0.1.0"
   :description "Tracks Twitter followers over time using disk and edn."
   :url "http://iantay.dev"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
@@ -14,8 +14,7 @@
 
   :plugins [[lein-environ "1.2.0"]]
 
-  :profiles {
-             :dev           [:project/dev :profiles/dev]
+  :profiles {:dev           [:project/dev :profiles/dev]
              :test          [:project/test :profiles/test]
              :repl          [:project/repl :profiles/repl]
              ;; only edit :profiles/* in profiles.clj

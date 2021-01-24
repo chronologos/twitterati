@@ -1,9 +1,9 @@
 # twitterati
 
-Automatically track your Twitter followers in Git. 
+Automatically track your Twitter followers in Git, using GitHub Actions.
 
 This GitHub Action runs every hour to take a snapshot of your current followers. This is committed to the repository. 
-Viewing the repository history allows you to see how your followers have changed over time. 
+Viewing the repository history allows you to see how your followers have changed over time. Other basic stats are also tracked (e.g. mutuals, people you follow who don't follow you). The idea being that curating the people you follow to include more mutuals and fewer big accounts will generally make your Twitter life more engaging and fruitful :)
 
 ## Usage
 
@@ -13,7 +13,7 @@ Viewing the repository history allows you to see how your followers have changed
 
 ## License
 
-Copyright © 2020 chronologos
+Copyright © 2021 chronologos
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at
