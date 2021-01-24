@@ -55,29 +55,34 @@
                                   (map :followers_count)
                                   (reduce +))]
     ;; after processing, write to outputs
-    (spit names/no-follow-back-filename (pr-str no-follow-back)) ;; friends who don't follow back
-    (spit names/data-filename-name-only (pr-str curr-followers-names)) ;; names of current followers
-    (spit names/data-filename (pr-str followers')) ;; data of current followers
-    (spit names/data-filename-all-historical-names (pr-str all-followers)) ;; names of all historical followers
+    (io/make-parents names/no-follow-back-fpath)
+    (spit names/no-follow-back-fpath (pr-str no-follow-back)) ;; friends who don't follow back
+    (spit names/follower-names-fpath (pr-str curr-followers-names)) ;; names of current followers
+    (spit names/data-fpath (pr-str followers')) ;; data of current followers
+    (spit names/historical-followers-fpath (pr-str all-followers)) ;; names of all historical followers
     ;; aggregated count statistics
-    (spit names/running-data-filename (println-str
-                                       "date: " (now)
-                                       ", follower-count: " (count followers')
-                                       ", follower-reach: " follower-total-reach
-                                       ", all-time-followers: " (count  all-followers))
-          :append (.exists (io/file names/running-data-filename)))
+    (spit names/running-data-fpath (println-str
+                                    "date: " (now)
+                                    ", follower-count: " (count followers')
+                                    ", follower-reach: " follower-total-reach
+                                    ", all-time-followers: " (count  all-followers))
+          :append (.exists (io/file names/running-data-fpath)))
     ;; diff (added removed same) over time
-    (spit names/running-diff-filename (println-str diff)
-          :append (.exists (io/file names/running-diff-filename)))
+    (spit names/running-diff-fpath (println-str diff)
+          :append (.exists (io/file names/running-diff-fpath)))
     ;; pretty-printed table of followers
-    (spit names/follower-table-filename
+    (spit names/follower-table-fpath
           (binding [*out* (java.io.StringWriter.)]
             (clojure.pprint/print-table followers')
             (.toString *out*)))))
 
 (defn -main []
-  (let [historical-followers (read-string (slurp names/data-filename-all-historical-names))
-        prev-state (read-string (slurp names/state-filename))
+  (let [historical-followers (try (read-string (slurp names/historical-followers-fpath))
+                                  (catch java.io.FileNotFoundException _
+                                    '()))
+        prev-state (try (read-string (slurp names/state-fpath))
+                        (catch java.io.FileNotFoundException _
+                          {}))
         stored-next-cursor (:cursor prev-state "-1")
         partial-data (:partial-data prev-state [])
         stored-next-cursor-friends (:cursor-friends prev-state "-1")
@@ -90,8 +95,8 @@
     ; if all data was fetched, do processing.
     (when all-data-fetched (process-raw-data current-followers-raw historical-followers current-friends-raw))
     ; save current cursor and data state. This allows the next run to pick up from where we left off if not all data was fetched.
-    (spit names/state-filename (pr-str
-                                {:cursor (if all-followers-fetched "-1" new-cursor)
-                                 :partial-data (if all-followers-fetched [] current-followers-raw)
-                                 :cursor-friends (if all-friends-fetched "-1" new-cursor-friends)
-                                 :partial-data-friends (if all-friends-fetched [] current-friends-raw)}))))
+    (spit names/state-fpath (pr-str
+                             {:cursor (if all-followers-fetched "-1" new-cursor)
+                              :partial-data (if all-followers-fetched [] current-followers-raw)
+                              :cursor-friends (if all-friends-fetched "-1" new-cursor-friends)
+                              :partial-data-friends (if all-friends-fetched [] current-friends-raw)}))))
