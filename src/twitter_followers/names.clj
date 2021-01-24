@@ -16,7 +16,7 @@
   (env :username))
 
 ; for unix filesystems
-(def data-dir "./data/")
+(def data-dir "../data/")
 
 (def state-fpath
   "file for storing app state"
