@@ -1,33 +1,33 @@
-name: "Twitter Followers Tracker"
+# name: "Twitter Followers Tracker"
 
-on:
-  push:
-    branches:
-      - master
-  schedule:
-    -   cron: "1 2 */2 * *"
+# on:
+#   push:
+#     branches:
+#       - master
+#   schedule:
+#     -   cron: "1 2 */2 * *"
 
-jobs:
-  backup:
-    runs-on: ubuntu-latest
-    name: Backup
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v2
-      - uses: DeLaGuardo/setup-graalvm@3.0
-        with:
-          graalvm-version: '19.3.1.java11'
-      - uses: DeLaGuardo/setup-clojure@3.1
-        with:
-          cli: '1.10.1.469'
-          lein: 2.9.4
-      - shell: bash
-        env:
-          USERNAME: ${{ secrets.Username }}
-          CONSUMER_KEY: ${{ secrets.ConsumerKey }}
-          CONSUMER_SECRET: ${{ secrets.ConsumerSecret }}
-        run: lein run
-      - name: Commit changes
-        uses: elstudio/actions-js-build/commit@v3
-        with:
-          commitMessage: Automated snapshot
+# jobs:
+#   backup:
+#     runs-on: ubuntu-latest
+#     name: Backup
+#     timeout-minutes: 20
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: DeLaGuardo/setup-graalvm@3.0
+#         with:
+#           graalvm-version: '19.3.1.java11'
+#       - uses: DeLaGuardo/setup-clojure@3.1
+#         with:
+#           cli: '1.10.1.469'
+#           lein: 2.9.4
+#       - shell: bash
+#         env:
+#           USERNAME: ${{ secrets.Username }}
+#           CONSUMER_KEY: ${{ secrets.ConsumerKey }}
+#           CONSUMER_SECRET: ${{ secrets.ConsumerSecret }}
+#         run: cd twitterati && lein run
+#       - name: Commit changes
+#         uses: elstudio/actions-js-build/commit@v3
+#         with:
+#           commitMessage: Automated snapshot
