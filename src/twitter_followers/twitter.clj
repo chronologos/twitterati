@@ -36,10 +36,10 @@
                                {:query-params  (merge (credentials user-params url) user-params)
                                 :debug         false
                                 :cookie-policy :standard})
-                   (catch [:status 429] _
+                   (catch [:status 429] #_{:clj-kondo/ignore [:unresolved-symbol]} _
                      (log/error "429 - Too many requests" user-params) (throw+))
                    (catch Object _
-                     (log/error (:throwable &throw-context) "unexpected error")
+                     (log/error (:throwable #_{:clj-kondo/ignore [:unresolved-symbol]} &throw-context) "unexpected error")
                      (throw+)))
         ;; _ (log/debug  "resp:" resp "\n")
         bod (-> resp

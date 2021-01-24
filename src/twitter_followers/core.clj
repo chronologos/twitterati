@@ -77,7 +77,8 @@
             (.toString *out*)))))
 
 (defn -main []
-  (let [historical-followers (try (read-string (slurp names/historical-followers-fpath))
+  (let [use-cache false ;; set to true to use cached Twitter responses rather than calling twitter/fetch-all
+        historical-followers (try (read-string (slurp names/historical-followers-fpath))
                                   (catch java.io.FileNotFoundException _
                                     '()))
         prev-state (try (read-string (slurp names/state-fpath))
@@ -87,8 +88,14 @@
         partial-data (:partial-data prev-state [])
         stored-next-cursor-friends (:cursor-friends prev-state "-1")
         partial-data-friends (:partial-data-friends prev-state [])
-        [current-followers-raw new-cursor] (twitter/fetch-all names/followers-url stored-next-cursor partial-data twitter/http-fetch-single-cursor)
-        [current-friends-raw new-cursor-friends]  (twitter/fetch-all names/friends-url stored-next-cursor-friends partial-data-friends twitter/http-fetch-single-cursor)
+        [current-followers-raw new-cursor] (if use-cache 
+                                             [(read-string (slurp "./test/followers.clj")) "0"]
+                                             (twitter/fetch-all names/followers-url stored-next-cursor partial-data twitter/http-fetch-single-cursor))
+        [current-friends-raw new-cursor-friends]  (if use-cache 
+                                                    [(read-string (slurp "./test/friends.clj")) "0"]
+                                                    (twitter/fetch-all names/friends-url stored-next-cursor-friends partial-data-friends twitter/http-fetch-single-cursor))
+        _ (when-not use-cache (spit "./test/followers.clj" (pr-str current-followers-raw)))
+        _ (when-not use-cache (spit "./test/friends.clj" (pr-str current-friends-raw)))
         all-friends-fetched (= new-cursor-friends "0")
         all-followers-fetched (= new-cursor "0")
         all-data-fetched (and all-friends-fetched all-followers-fetched)]
